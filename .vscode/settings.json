@@ -1,0 +1,15 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv",
+  "python.envFile": "${workspaceFolder}/.venv",
+  "mypy.runUsingActiveInterpreter": true,
+  "mypy-type-checker.args": [
+    "--enable-incomplete-feature=Unpack",
+    "--check-untyped-defs"
+  ],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.black-formatter",
+    "editor.formatOnSave": true
+  },
+  "python.analysis.typeCheckingMode": "off",
+  "python.formatting.provider": "none"
+}

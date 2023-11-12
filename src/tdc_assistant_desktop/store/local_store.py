@@ -42,9 +42,12 @@ def update_chat_logs(chat_logs: list[ChatLog]) -> None:
 
 def update_most_recent_chat_log(chat_log: ChatLog) -> None:
     chat_logs = load_chat_logs()
-    most_recent_chat_log = chat_logs[-1]
 
-    if most_recent_chat_log["id"] != chat_log["id"]:
-        update_chat_logs(chat_logs + [chat_log])
+    if len(chat_logs) > 0:
+        most_recent_chat_log = chat_logs[-1]
+        if most_recent_chat_log["id"] != chat_log["id"]:
+            update_chat_logs(chat_logs + [chat_log])
+        else:
+            update_chat_logs(chat_logs[:-1] + [chat_log])
     else:
-        update_chat_logs(chat_logs[:-1] + [chat_log])
+        update_chat_logs([chat_log])

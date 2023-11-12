@@ -24,6 +24,8 @@ def run_cli(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2)
             send_message(
                 controller, {"component": "public chat", "content": message_content}
             )
+        elif option == "4":
+            insert_code_editor(controller)
         elif option == "q":
             break
         else:
@@ -33,6 +35,8 @@ def run_cli(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2)
 def init_controller() -> TdcAssistantGuiControllerV2:
     public_chat_pop_out_coords = env["PUBLIC_CHAT_POP_OUT_COORDS"]
     public_chat_text_area_coords = env["PUBLIC_CHAT_TEXT_AREA_COORDS"]
+    insert_code_editor_coord_path = env["INSERT_CODE_EDITOR_COORD_PATH"]
+
     return TdcAssistantGuiControllerV2(
         {
             "tutor_profile": {
@@ -41,13 +45,31 @@ def init_controller() -> TdcAssistantGuiControllerV2:
             },
             "coords": {
                 "public_chat_pop_out": {
-                    "x": int(public_chat_pop_out_coords[0]),
-                    "y": int(public_chat_pop_out_coords[1]),
+                    "x": int(public_chat_pop_out_coords[0]),  # type: ignore
+                    "y": int(public_chat_pop_out_coords[1]),  # type: ignore
                 },
                 "public_chat_text_area": {
-                    "x": int(public_chat_text_area_coords[0]),
-                    "y": int(public_chat_text_area_coords[1]),
+                    "x": int(public_chat_text_area_coords[0]),  # type: ignore
+                    "y": int(public_chat_text_area_coords[1]),  # type: ignore
                 },
+                "insert_code_editor_coord_path": (
+                    {
+                        "x": insert_code_editor_coord_path[0][0],  # type: ignore
+                        "y": insert_code_editor_coord_path[0][1],  # type: ignore
+                    },
+                    {
+                        "x": insert_code_editor_coord_path[1][0],  # type: ignore
+                        "y": insert_code_editor_coord_path[1][1],  # type: ignore
+                    },
+                    {
+                        "x": insert_code_editor_coord_path[2][0],  # type: ignore
+                        "y": insert_code_editor_coord_path[2][1],  # type: ignore
+                    },
+                    {
+                        "x": insert_code_editor_coord_path[3][0],  # type: ignore
+                        "y": insert_code_editor_coord_path[3][1],  # type: ignore
+                    },
+                ),
             },
         }
     )
@@ -104,10 +126,15 @@ def send_message(controller: TdcAssistantGuiControllerV2, message: Message):
     controller.send_message(message)
 
 
+def insert_code_editor(controller: TdcAssistantGuiControllerV2):
+    controller.insert_code_editor()
+
+
 def display_menu() -> str:
     print("[1] Scrape public chat and create chat completion")
     print("[2] Generate chat completion for last message")
     print("[3] Send message")
+    print("[4] Insert code editor")
     print("[Q] Quit")
     return input("Enter option: ").strip().lower()
 

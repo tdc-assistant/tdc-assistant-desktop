@@ -37,6 +37,7 @@ for env_key in env:
     if env_val is None:
         raise Exception(f"Cannot find environment variable: '{env_key}'")
     if env_key.endswith("COORDS"):
-        env[env_key] = tuple(map(int, env_val.split(",")))
+        x, y = map(int, env_val.split(","))
+        env[env_key] = x, y
     else:
         env[env_key] = env_val

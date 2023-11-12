@@ -1,4 +1,5 @@
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
+from tdc_assistant_gui_controller_v2.send_message import Message
 from tdc_assistant_client.client import TdcAssistantClient
 
 from config.env import env
@@ -18,6 +19,11 @@ def run_cli(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2)
             scrape_public_chat_and_create_chat_completion(client, controller)
         elif option == "2":
             get_chat_completion_for_last_chat_log(client)
+        elif option == "3":
+            message_content = input("Enter message text: ")
+            send_message(
+                controller, {"component": "public chat", "content": message_content}
+            )
         elif option == "q":
             break
         else:
@@ -30,17 +36,17 @@ def init_controller() -> TdcAssistantGuiControllerV2:
     return TdcAssistantGuiControllerV2(
         {
             "tutor_profile": {
-                "first_name": env["FIRST_NAME"],
-                "last_initial": env["LAST_INITIAL"],
+                "first_name": str(env["FIRST_NAME"]),
+                "last_initial": str(env["LAST_INITIAL"]),
             },
             "coords": {
                 "public_chat_pop_out": {
-                    "x": public_chat_pop_out_coords[0],
-                    "y": public_chat_pop_out_coords[1],
+                    "x": int(public_chat_pop_out_coords[0]),
+                    "y": int(public_chat_pop_out_coords[1]),
                 },
                 "public_chat_text_area": {
-                    "x": public_chat_text_area_coords[0],
-                    "y": public_chat_text_area_coords[1],
+                    "x": int(public_chat_text_area_coords[0]),
+                    "y": int(public_chat_text_area_coords[1]),
                 },
             },
         }
@@ -48,7 +54,7 @@ def init_controller() -> TdcAssistantGuiControllerV2:
 
 
 def init_client() -> TdcAssistantClient:
-    return TdcAssistantClient(url=env["TDC_ASSISTANT_URL"])
+    return TdcAssistantClient(url=str(env["TDC_ASSISTANT_URL"]))
 
 
 def scrape_public_chat_and_create_chat_completion(
@@ -94,9 +100,14 @@ def get_chat_completion_for_last_chat_log(client: TdcAssistantClient):
     print(chat_log_completion)
 
 
+def send_message(controller: TdcAssistantGuiControllerV2, message: Message):
+    controller.send_message(message)
+
+
 def display_menu() -> str:
     print("[1] Scrape public chat and create chat completion")
     print("[2] Generate chat completion for last message")
+    print("[3] Send message")
     print("[Q] Quit")
     return input("Enter option: ").strip().lower()
 

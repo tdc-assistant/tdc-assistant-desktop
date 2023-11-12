@@ -25,12 +25,24 @@ def run_cli(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2)
 
 
 def init_controller() -> TdcAssistantGuiControllerV2:
+    public_chat_pop_out_coords = env["PUBLIC_CHAT_POP_OUT_COORDS"]
+    public_chat_text_area_coords = env["PUBLIC_CHAT_TEXT_AREA_COORDS"]
     return TdcAssistantGuiControllerV2(
         {
             "tutor_profile": {
                 "first_name": env["FIRST_NAME"],
                 "last_initial": env["LAST_INITIAL"],
-            }
+            },
+            "coords": {
+                "public_chat_pop_out": {
+                    "x": public_chat_pop_out_coords[0],
+                    "y": public_chat_pop_out_coords[1],
+                },
+                "public_chat_text_area": {
+                    "x": public_chat_text_area_coords[0],
+                    "y": public_chat_text_area_coords[1],
+                },
+            },
         }
     )
 
@@ -70,6 +82,9 @@ def get_chat_completion_for_last_chat_log(client: TdcAssistantClient):
     chat_log = load_most_recent_chat_log()
 
     if chat_log is None:
+        return
+
+    if len(chat_log["messages"]) == 0:
         return
 
     chat_log_completion = client.create_chat_completion_annotation(

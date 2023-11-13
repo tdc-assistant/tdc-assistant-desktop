@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
 from tdc_assistant_gui_controller_v2.send_message import Message
 from tdc_assistant_gui_controller_v2.scrape_editors import Editor
@@ -7,7 +5,11 @@ from tdc_assistant_client.client import TdcAssistantClient
 
 from config.env import env
 
-from tasks import persist_chat_log, create_chat_completion_annotation
+from tasks import (
+    persist_chat_log,
+    create_chat_completion_annotation,
+    create_workspace_annotation,
+)
 from store import load_most_recent_chat_log
 
 
@@ -16,11 +18,11 @@ def main():
 
 
 def run_cli(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2):
-    editors: list[Editor] = []
+    editor_cache: list[Editor] = []
     while True:
         option = display_menu()
         if option == "1":
-            scrape_public_chat_and_create_chat_completion(client, controller)
+            create_chat_completion(client, controller)
         elif option == "2":
             get_chat_completion_for_last_chat_log(client)
         elif option == "3":
@@ -31,7 +33,7 @@ def run_cli(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2)
         elif option == "4":
             insert_code_editor(controller)
         elif option == "5":
-            editors = scrape_editor(controller, editors)
+            editor_cache = update_chat_with_editors(client, controller, editor_cache)
         elif option == "q":
             break
         else:
@@ -80,7 +82,7 @@ def init_controller() -> TdcAssistantGuiControllerV2:
             "scraped_editor_config": {
                 "coords_left": (100, 170),
                 "coords_right": (950, 170),
-                "coords_pop_out_button": (950, 170),
+                "coords_pop_out_button": (940, 170),
                 "text_editor_coords": (500, 500),
             },
         }
@@ -91,8 +93,9 @@ def init_client() -> TdcAssistantClient:
     return TdcAssistantClient(url=str(env["TDC_ASSISTANT_URL"]))
 
 
-def scrape_public_chat_and_create_chat_completion(
-    client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2
+def create_chat_completion(
+    client: TdcAssistantClient,
+    controller: TdcAssistantGuiControllerV2,
 ):
     chat_log = persist_chat_log(client, controller)
     chat_log_with_annotation = create_chat_completion_annotation(client, chat_log)
@@ -142,8 +145,14 @@ def insert_code_editor(controller: TdcAssistantGuiControllerV2):
     controller.insert_code_editor()
 
 
-def scrape_editor(controller: TdcAssistantGuiControllerV2, editors: list[Editor]):
-    return controller.scrape_editor(editors)
+def update_chat_with_editors(
+    client: TdcAssistantClient,
+    controller: TdcAssistantGuiControllerV2,
+    editor_cache: list[Editor],
+):
+    editor_cache = controller.scrape_editor(editor_cache)
+    create_workspace_annotation(client, controller, editor_cache)
+    return editor_cache
 
 
 def display_menu() -> str:

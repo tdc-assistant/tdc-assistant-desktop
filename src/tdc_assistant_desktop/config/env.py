@@ -41,10 +41,10 @@ for env_key in env:
     env_val = os.environ.get(env_key)
     if env_val is None:
         raise Exception(f"Cannot find environment variable: '{env_key}'")
-    if env_key.endswith("COORDS"):
+    elif env_key.endswith("COORDS"):
         x, y = map(int, env_val.split(","))
         env[env_key] = x, y
-    if env_key.endswith("PATH"):
+    elif env_key.endswith("PATH"):
         path: list[tuple[int, int]] = []
         for coord in env_val.split(" "):
             x, y = map(int, coord.split(","))

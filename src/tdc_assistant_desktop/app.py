@@ -9,6 +9,7 @@ from tasks import (
     persist_chat_log,
     create_chat_completion_annotation,
     create_workspace_annotation,
+    send_last_chat_completion,
 )
 from store import load_most_recent_chat_log
 
@@ -34,6 +35,8 @@ def run_cli(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2)
             insert_code_editor(controller)
         elif option == "5":
             editor_cache = update_chat_with_editors(client, controller, editor_cache)
+        elif option == "6":
+            send_last_chat_completion(client, controller)
         elif option == "q":
             break
         else:
@@ -78,6 +81,7 @@ def init_controller() -> TdcAssistantGuiControllerV2:
                         "y": insert_code_editor_coord_path[3][1],  # type: ignore
                     },
                 ),
+                "public_chat_button_coords": {"x": 1200, "y": 170},
             },
             "scraped_editor_config": {
                 "coords_left": (100, 170),
@@ -110,15 +114,6 @@ def create_chat_completion(
                 chat_completion = annotation["chatCompletion"]
                 if chat_completion is None:
                     continue
-
-                parts = chat_completion["parts"]
-                if parts is None:
-                    continue
-                for part in parts:
-                    part_type = part["type"]
-                    print(f"[{part_type}]")
-                    print(part["content"])
-                    print()
 
 
 def get_chat_completion_for_last_chat_log(client: TdcAssistantClient):
@@ -161,6 +156,7 @@ def display_menu() -> str:
     print("[3] Send message")
     print("[4] Insert code editor")
     print("[5] Scrape editors")
+    print("[6] Send last chat completion")
     print("[Q] Quit")
     return input("Enter option: ").strip().lower()
 

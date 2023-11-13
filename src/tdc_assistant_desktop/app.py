@@ -1,5 +1,8 @@
+from pprint import pprint
+
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
 from tdc_assistant_gui_controller_v2.send_message import Message
+from tdc_assistant_gui_controller_v2.scrape_editors import Editor
 from tdc_assistant_client.client import TdcAssistantClient
 
 from config.env import env
@@ -13,6 +16,7 @@ def main():
 
 
 def run_cli(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2):
+    editors: list[Editor] = []
     while True:
         option = display_menu()
         if option == "1":
@@ -26,6 +30,8 @@ def run_cli(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2)
             )
         elif option == "4":
             insert_code_editor(controller)
+        elif option == "5":
+            editors = scrape_editor(controller, editors)
         elif option == "q":
             break
         else:
@@ -70,6 +76,12 @@ def init_controller() -> TdcAssistantGuiControllerV2:
                         "y": insert_code_editor_coord_path[3][1],  # type: ignore
                     },
                 ),
+            },
+            "scraped_editor_config": {
+                "coords_left": (100, 170),
+                "coords_right": (950, 170),
+                "coords_pop_out_button": (950, 170),
+                "text_editor_coords": (500, 500),
             },
         }
     )
@@ -130,11 +142,16 @@ def insert_code_editor(controller: TdcAssistantGuiControllerV2):
     controller.insert_code_editor()
 
 
+def scrape_editor(controller: TdcAssistantGuiControllerV2, editors: list[Editor]):
+    return controller.scrape_editor(editors)
+
+
 def display_menu() -> str:
     print("[1] Scrape public chat and create chat completion")
     print("[2] Generate chat completion for last message")
     print("[3] Send message")
     print("[4] Insert code editor")
+    print("[5] Scrape editors")
     print("[Q] Quit")
     return input("Enter option: ").strip().lower()
 

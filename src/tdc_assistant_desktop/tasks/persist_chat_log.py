@@ -6,51 +6,36 @@ from tdc_assistant_client.domain import ChatLog, MessageRole
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
 from tdc_assistant_gui_controller_v2.public_chat import PublicChat, ParticipantType
 
-from store import load_most_recent_chat_log, update_most_recent_chat_log
+from store import update_chat_log_ids
+from .fetch_most_recent_chat_log import fetch_most_recent_chat_log
 
 
 def persist_chat_log(
     client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2
 ) -> ChatLog:
     public_chat = controller.scrape_public_chat()
-    most_recent_chat_log = load_most_recent_chat_log()
 
-    # Check if a `ChatLog` for this `PublicChat` already exists
-    chat_log: Optional[ChatLog] = None
-    if most_recent_chat_log is not None:
-        # Why do this? Instead of fetching all the chat logs, using local storage
-        # allows us to fetch just a single chat log to imporove performance
-        if _is_same_chat(public_chat, most_recent_chat_log):
-            # `ChatLog` already exists
-            chat_log = client.get_chat_log(chat_log_id=most_recent_chat_log["id"])
-
-    if chat_log is None:
-        # Could not find an existing `ChatLog` so create a new one
-        optional_customer_name = _get_customer_name_from_public_chat(public_chat)
+    chat_log = fetch_most_recent_chat_log(client)
+    if chat_log is None or not _is_same_chat(public_chat, chat_log):
         # TODO Should be able to create a chat log without a customer name
+        optional_customer_name = _get_customer_name_from_public_chat(public_chat)
         chat_log = client.create_chat_log(customer_name=optional_customer_name or "")
+        update_chat_log_ids(chat_log_id=chat_log["id"])
 
     # Persist messages from `PublicChat` to `ChatLog`
     # TODO Should be able to create messges in bulk and send messges along with
     # initial request to create a `ChatLog`
-    unsaved_public_chat_messages = public_chat["messages"][len(chat_log["messages"]) :]
-    chat_log_id = chat_log["id"]
-    for message in unsaved_public_chat_messages:
+    num_old_messages = len(chat_log["messages"])
+    new_messages = public_chat["messages"][num_old_messages:]
+    for message in new_messages:
         participant = message["participant"]
-        role = _participant_type_to_message_role_map[participant["type"]]
-        content = message["content"]
         client.create_message(
-            chat_log_id=chat_log_id,
-            role=role,
-            content=content,
+            chat_log_id=chat_log["id"],
+            role=_participant_type_to_message_role_map[participant["type"]],
+            content=message["content"],
         )
 
-    updated_chat_log = client.get_chat_log(chat_log_id=chat_log_id)
-
-    # After creating chat log persist back to local store
-    update_most_recent_chat_log(updated_chat_log)
-
-    return updated_chat_log
+    return client.get_chat_log(chat_log_id=chat_log["id"])
 
 
 def _is_same_chat(public_chat: PublicChat, chat_log: ChatLog) -> bool:

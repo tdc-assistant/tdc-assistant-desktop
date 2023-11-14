@@ -17,8 +17,10 @@ def persist_code_editors(
         raise Exception(f"No messages exist for ChatLog: '{chat_log['id']}'")
 
     for board_number, editor in enumerate(controller.scrape_editor()):
-        client.create_workspace_annotation(
-            message=messages[-1],
-            content=editor["content"],
+        client.create_workspace(
+            chat_log=chat_log,
             board_number=board_number,
+            content=editor["content"],
+            # FIXME
+            workspace_type="CODE_EDITOR",
         )

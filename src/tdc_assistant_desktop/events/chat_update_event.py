@@ -1,5 +1,5 @@
-from .base_event import BaseEvent, Literal
+from typing import TypedDict, Literal
 
 
-class ChatUpdateEvent(BaseEvent):
+class ChatUpdateEvent(TypedDict):
     name: Literal["chat_update_event"]

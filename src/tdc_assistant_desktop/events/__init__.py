@@ -1,1 +1,1 @@
-from .chat_update_event import *
+from .event import *

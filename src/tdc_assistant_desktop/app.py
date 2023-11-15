@@ -1,7 +1,9 @@
+from time import sleep
+
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
 from tdc_assistant_client.client import TdcAssistantClient
 
-from config.env import env
+from config import config, env
 
 from commands import commands
 
@@ -18,6 +20,7 @@ def run_cli(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2)
             print("Good-bye!")
             break
 
+        sleep(config["DELAY_AFTER_OPTION_SELECT_IN_SECONDS"])
         commands[option]["handler"](client, controller)
 
 

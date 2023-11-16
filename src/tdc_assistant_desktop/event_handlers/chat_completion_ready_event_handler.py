@@ -1,17 +1,13 @@
 from time import sleep
-from datetime import datetime
+from datetime import datetime, timezone
+
 from random import randint
 
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
 
 from tdc_assistant_client.client import TdcAssistantClient
 
-from tasks import (
-    persist_chat_log,
-    create_chat_completion_annotation,
-)
-
-from utils import log_datetime, log_timedelta, find_most_recent_approved_chat_completion
+from utils import find_most_recent_approved_chat_completion
 from tasks import fetch_most_recent_chat_log
 
 
@@ -49,6 +45,6 @@ class ChatCompletionReadyEventHandler:
 
         self._client.update_chat_completion_annotation(
             chat_completion_annotation=chat_completion_annotation,
-            sent_at=datetime.now(),
+            sent_at=datetime.now(timezone.utc),
             approval_status="APPROVED",
         )

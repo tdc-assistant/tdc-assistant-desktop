@@ -3,7 +3,6 @@ from typing import Optional
 from tdc_assistant_client.client import TdcAssistantClient
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
 
-from tasks.fetch_most_recent_chat_log import fetch_most_recent_chat_log
 from utils import is_same_chat
 
 from utils import log_datetime, log_timedelta

@@ -4,6 +4,7 @@ from tdc_assistant_client.client import TdcAssistantClient
 
 from tasks import (
     persist_chat_log,
+    persist_code_editors,
     create_chat_completion_annotation,
 )
 
@@ -27,6 +28,17 @@ class ChatUpdateEventHandler:
 
         persist_chat_log_end = log_datetime(self, "Finished persisting chat log")
         log_timedelta(persist_chat_log_start, persist_chat_log_end)
+
+        persist_code_editors_start = log_datetime(
+            self, "Started persisting code editors"
+        )
+
+        persist_code_editors(self._client, self._controller, chat_log)
+
+        persist_code_editors_end = log_datetime(
+            self, "Finished persisting code editors"
+        )
+        log_timedelta(persist_code_editors_start, persist_code_editors_end)
 
         create_chat_completion_start = log_datetime(
             self, "Started creating chat completion"

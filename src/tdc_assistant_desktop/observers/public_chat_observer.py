@@ -34,7 +34,11 @@ class PublicChatObserver(BaseObserver):
         log_timedelta(scrape_public_chat_start, scrape_public_chat_end)
 
         # Only create a "chat-update" event if the last message was sent by the student
-        most_recent_message = public_chat["messages"][-1]
+        messages = public_chat["messages"]
+        if len(messages) == 0:
+            return None
+
+        most_recent_message = messages[-1]
         if most_recent_message["participant"]["type"] != "student":
             return None
 

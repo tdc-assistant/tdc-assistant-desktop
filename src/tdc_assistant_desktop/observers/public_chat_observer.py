@@ -34,6 +34,11 @@ class PublicChatObserver(BaseObserver):
         scrape_public_chat_end = log_datetime(self, "Finished scraping public chat")
         log_timedelta(scrape_public_chat_start, scrape_public_chat_end)
 
+        # Only create a "chat-update" event if the last message was sent by the student
+        most_recent_message = public_chat["messages"][-1]
+        if most_recent_message["participant"]["type"] != "student":
+            return None
+
         if not is_same_chat(public_chat, chat_log):
             return {"name": "chat-update"}
 

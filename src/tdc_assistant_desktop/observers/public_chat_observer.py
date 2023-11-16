@@ -9,28 +9,20 @@ from utils import is_same_chat
 from utils import log_datetime, log_timedelta
 from domain import Event
 
+from .base_observer import BaseObserver
 
-class PublicChatObserver:
+
+class PublicChatObserver(BaseObserver):
     _client: TdcAssistantClient
     _controller: TdcAssistantGuiControllerV2
 
     def __init__(
         self, client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2
     ):
-        self._client = client
-        self._controller = controller
+        super().__init__(client, controller)
 
     def poll(self) -> Optional[Event]:
-        fetch_chat_log_start = log_datetime(
-            self, "Started fetching most recent chat log"
-        )
-
-        chat_log = fetch_most_recent_chat_log(self._client)
-
-        fetch_chat_log_end = log_datetime(
-            self, "Finished fetching most recent chat log"
-        )
-        log_timedelta(fetch_chat_log_start, fetch_chat_log_end)
+        chat_log = self._fetch_most_recent_chat_log()
 
         if chat_log is None:
             return {"name": "chat-update"}

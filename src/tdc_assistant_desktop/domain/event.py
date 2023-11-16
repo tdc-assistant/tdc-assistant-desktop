@@ -1,6 +1,6 @@
-from typing import TypedDict, Literal
+from typing import TypedDict, Literal, Union
 
-EventName = Literal["chat-update"]
+EventName = Union[Literal["chat-update"], Literal["chat-completion-ready"]]
 
 
 class Event(TypedDict):

@@ -32,9 +32,49 @@ class ChatUpdateEventHandler:
             self, "Started creating chat completion"
         )
 
-        create_chat_completion_annotation(self._client, chat_log)
+        chat_completion_annotation = create_chat_completion_annotation(
+            self._client, chat_log
+        )
 
         create_chat_completion_end = log_datetime(
             self, "Finished creating chat completion"
         )
         log_timedelta(create_chat_completion_start, create_chat_completion_end)
+
+        if chat_completion_annotation is None:
+            print("Failed to create chat completion creation")
+            return None
+
+        chat_completion = chat_completion_annotation["chatCompletion"]
+        if chat_completion is None:
+            return
+
+        for part in chat_completion["parts"]:
+            print(f'[{part["type"]}]')
+            print(part["content"])
+            print()
+
+        should_send = input("Send chat completion (y/[N])? ").strip().lower() == "y"
+        if not should_send:
+            return None
+
+        approve_chat_completion_annotation_start = log_datetime(
+            self, "Started approving chat completion annotation"
+        )
+
+        # TODO Add something here to prompt user to approve
+        # Should be conditional based on env var
+
+        self._client.update_chat_completion_annotation(
+            chat_completion_annotation=chat_completion_annotation,
+            sent_at=None,
+            approval_status="APPROVED",
+        )
+
+        approve_chat_completion_annotation_end = log_datetime(
+            self, "Finished approving chat completion annotation"
+        )
+        log_timedelta(
+            approve_chat_completion_annotation_start,
+            approve_chat_completion_annotation_end,
+        )

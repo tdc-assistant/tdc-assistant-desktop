@@ -17,16 +17,16 @@ def persist_code_editors(
     workspaces = chat_log["workspaces"]
 
     for board_number, editor in enumerate(controller.scrape_editor()):
-        if board_number > len(workspaces):
+        if board_number < len(workspaces):
+            client.update_workspace(
+                workspace=workspaces[board_number],
+                content=editor["content"],
+            )
+        else:
             client.create_workspace(
                 chat_log=chat_log,
                 board_number=board_number,
                 content=editor["content"],
                 # FIXME
                 workspace_type="CODE_EDITOR",
-            )
-        else:
-            client.update_workspace(
-                workspace=workspaces[board_number],
-                content=editor["content"],
             )

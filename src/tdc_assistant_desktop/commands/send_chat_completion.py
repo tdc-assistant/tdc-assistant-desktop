@@ -44,7 +44,5 @@ def send_chat_completion(
 
     for part in chat_completion_to_send["parts"]:
         if part["type"] == "CONVERSATION":
-            controller.send_message(
-                {"component": "code editor", "content": part["content"]}
-            )
+            controller.send_message(part["content"])
             sleep(randint(10, 25))

@@ -65,10 +65,17 @@ def init_controller() -> TdcAssistantGuiControllerV2:
                 "public_chat_button_coords": {"x": 1200, "y": 170},
             },
             "scraped_editor_config": {
-                "coords_left": (100, 170),
+                "coords_left": (200, 170),
                 "coords_right": (950, 170),
                 "coords_pop_out_button": (940, 170),
                 "text_editor_coords": (500, 500),
+            },
+            "aws_credentials": {
+                "access_key": str(env["AWS_ACCESS_KEY_ID"]),
+                "secret_key": str(env["AWS_SECRET_ACCESS_KEY"]),
+                "bucket_name": str(env["BUCKET_NAME"]),
+                "region": str(env["REGION"]),
+                "object_url_domain": str(env["OBJECT_URL_DOMAIN"]),
             },
         }
     )

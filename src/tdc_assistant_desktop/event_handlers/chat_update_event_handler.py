@@ -1,3 +1,5 @@
+from time import sleep
+
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
 
 from tdc_assistant_client.client import TdcAssistantClient
@@ -66,9 +68,12 @@ class ChatUpdateEventHandler:
             print(part["content"])
             print()
 
-        should_send = input("Send chat completion (y/[N])? ").strip().lower() == "y"
-        if not should_send:
-            return None
+        # should_send = input("Send chat completion (y/[N])? ").strip().lower() == "y"
+        # if not should_send:
+        #     return None
+
+        should_send = True
+        sleep(3)
 
         approve_chat_completion_annotation_start = log_datetime(
             self, "Started approving chat completion annotation"

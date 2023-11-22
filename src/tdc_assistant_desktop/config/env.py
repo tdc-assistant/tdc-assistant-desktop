@@ -24,6 +24,11 @@ EnvironmentVariableKey = Union[
     Literal["PUBLIC_CHAT_POP_OUT_COORDS"],
     Literal["PUBLIC_CHAT_TEXT_AREA_COORDS"],
     Literal["INSERT_CODE_EDITOR_COORD_PATH"],
+    Literal["AWS_ACCESS_KEY_ID"],
+    Literal["AWS_SECRET_ACCESS_KEY"],
+    Literal["REGION"],
+    Literal["BUCKET_NAME"],
+    Literal["OBJECT_URL_DOMAIN"],
 ]
 
 env: dict[
@@ -35,6 +40,11 @@ env: dict[
     "PUBLIC_CHAT_POP_OUT_COORDS": (0, 0),
     "PUBLIC_CHAT_TEXT_AREA_COORDS": (0, 0),
     "INSERT_CODE_EDITOR_COORD_PATH": [(0, 0), (0, 0), (0, 0), (0, 0)],
+    "AWS_ACCESS_KEY_ID": "",
+    "AWS_SECRET_ACCESS_KEY": "",
+    "REGION": "",
+    "BUCKET_NAME": "",
+    "OBJECT_URL_DOMAIN": "",
 }
 
 for env_key in env:

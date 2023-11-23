@@ -8,6 +8,7 @@ from .scrape_code_editors import *
 from .scrape_screenshare import *
 from .send_message import *
 from .send_text_to_code_editor import *
+from .create_code_editor import *
 
 
 commands: list[Command] = [
@@ -20,4 +21,5 @@ commands: list[Command] = [
     {"label": "Scrape Screenshare", "handler": scrape_screenshare},
     {"label": "Send Message", "handler": send_message},
     {"label": "Send Text to Code Editor", "handler": send_text_to_code_editor},
+    {"label": "Create Code Editor", "handler": create_code_editor},
 ]

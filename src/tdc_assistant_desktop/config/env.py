@@ -32,7 +32,7 @@ EnvironmentVariableKey = Union[
 ]
 
 env: dict[
-    EnvironmentVariableKey, Union[str, tuple[int, int], list[tuple[int, int]]]
+    EnvironmentVariableKey, Union[bool, str, tuple[int, int], list[tuple[int, int]]]
 ] = {
     "FIRST_NAME": "",
     "LAST_INITIAL": "",

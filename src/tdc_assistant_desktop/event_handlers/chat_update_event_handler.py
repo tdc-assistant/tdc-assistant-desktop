@@ -12,6 +12,8 @@ from tasks import (
 
 from utils import log_datetime, log_timedelta
 
+from domain import Event
+
 
 class ChatUpdateEventHandler:
     _client: TdcAssistantClient
@@ -23,7 +25,7 @@ class ChatUpdateEventHandler:
         self._client = client
         self._controller = controller
 
-    def handle(self):
+    def handle(self, event: Event):
         persist_chat_log_start = log_datetime(self, "Started persisting chat log")
 
         chat_log = persist_chat_log(self._client, self._controller)

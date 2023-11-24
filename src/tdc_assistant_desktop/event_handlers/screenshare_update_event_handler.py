@@ -4,6 +4,8 @@ from tdc_assistant_client.domain import Message
 
 from tasks import fetch_most_recent_chat_log
 
+from domain import Event
+
 
 class ScreenshareUpdateEventHandler:
     _client: TdcAssistantClient
@@ -15,7 +17,7 @@ class ScreenshareUpdateEventHandler:
         self._client = client
         self._controller = controller
 
-    def handle(self):
+    def handle(self, event: Event):
         chat_log = fetch_most_recent_chat_log(self._client)
 
         if chat_log is None:

@@ -1,11 +1,12 @@
-from typing import Optional
+from typing import Optional, Any
 
 from tdc_assistant_client.client import TdcAssistantClient
+from tdc_assistant_client.domain import CodeEditor
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
 
 from .base_observer import BaseObserver
 
-from domain import UpdateEditorsEvent, UpdateCodeEditorPayload, CreateCodeEditorPayload
+from domain import UpdateEditorsEvent, UpdateCodeEditorPayload
 
 
 class CodeEditorsObserver(BaseObserver):
@@ -30,7 +31,7 @@ class CodeEditorsObserver(BaseObserver):
         ]
 
         editors_to_update: list[UpdateCodeEditorPayload] = []
-        editors_to_create: list[CreateCodeEditorPayload] = []
+        editors_to_create: list[Any] = []
 
         for ccef in code_editors_from_controller:
             for ccec in code_editors_from_client:

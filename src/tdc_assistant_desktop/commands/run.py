@@ -15,6 +15,7 @@ from event_handlers import (
     ChatCompletionReadyEventHandler,
     ScreenshareUpdateEventHandler,
     CodeEditorsUpdateEventHandler,
+    WordProcessorsUpdateEventHandler,
 )
 
 
@@ -31,6 +32,7 @@ def run(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2) -> 
                 ChatCompletionReadyEventHandler,
                 ScreenshareUpdateEventHandler,
                 CodeEditorsUpdateEventHandler,
+                WordProcessorsUpdateEventHandler,
             ]
         ],
     ] = {
@@ -38,6 +40,9 @@ def run(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2) -> 
         "chat-completion-ready": [ChatCompletionReadyEventHandler(client, controller)],
         "screenshare-update": [ScreenshareUpdateEventHandler(client, controller)],
         "editors-update": [CodeEditorsUpdateEventHandler(client, controller)],
+        "word-processors-update": [
+            WordProcessorsUpdateEventHandler(client, controller)
+        ],
     }
 
     while True:

@@ -10,6 +10,7 @@ from .send_message import *
 from .send_text_to_code_editor import *
 from .create_code_editor import *
 from .scrape_word_processors import *
+from .create_word_processor import *
 
 
 commands: list[Command] = [
@@ -24,4 +25,5 @@ commands: list[Command] = [
     {"label": "Send Text to Code Editor", "handler": send_text_to_code_editor},
     {"label": "Create Code Editor", "handler": create_code_editor},
     {"label": "Scrape Word Processors", "handler": scrape_word_processors},
+    {"label": "Create Word Processors", "handler": create_word_processor},
 ]

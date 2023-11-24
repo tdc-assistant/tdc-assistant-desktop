@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Any
 
 from tdc_assistant_client.client import TdcAssistantClient
 from tdc_assistant_client.domain import WordProcessor
@@ -31,7 +31,7 @@ class WordProcessorsObserver(BaseObserver):
         ]
 
         word_processors_to_update: list[UpdateWordProcessorPayload] = []
-        word_processors_to_create: list[WordProcessor] = []
+        word_processors_to_create: list[Any] = []
 
         for wp_controller in word_processors_from_controller:
             for wp_client in word_processors_from_client:

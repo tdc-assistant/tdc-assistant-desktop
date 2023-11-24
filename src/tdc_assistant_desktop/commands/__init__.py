@@ -9,6 +9,7 @@ from .scrape_screenshare import *
 from .send_message import *
 from .send_text_to_code_editor import *
 from .create_code_editor import *
+from .scrape_word_processors import *
 
 
 commands: list[Command] = [
@@ -22,4 +23,5 @@ commands: list[Command] = [
     {"label": "Send Message", "handler": send_message},
     {"label": "Send Text to Code Editor", "handler": send_text_to_code_editor},
     {"label": "Create Code Editor", "handler": create_code_editor},
+    {"label": "Scrape Word Processors", "handler": scrape_word_processors},
 ]

@@ -15,7 +15,7 @@ class ScreenshareUpdateEventHandler(BaseEventHandler):
     ):
         super().__init__(client, controller)
 
-    def handle(self, event: Event):
+    def _handle(self, event: Event):
         chat_log = fetch_most_recent_chat_log(self._client)
 
         if chat_log is None:

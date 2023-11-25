@@ -38,7 +38,7 @@ class ScreenshareObserver(BaseObserver):
 
         return None
 
-    def poll(self) -> Optional[Event]:
+    def _poll(self) -> Optional[Event]:
         """
         Generates a "screenshare-update" event when either
         (1) The screenshare window is visible and no image capture exists

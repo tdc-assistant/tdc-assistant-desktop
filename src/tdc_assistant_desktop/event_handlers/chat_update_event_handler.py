@@ -13,18 +13,14 @@ from tasks import (
 from logger import Logger
 from domain import Event
 
+from .base_event_handler import BaseEventHandler
 
-class ChatUpdateEventHandler:
-    _client: TdcAssistantClient
-    _controller: TdcAssistantGuiControllerV2
-    _logger: Logger
 
+class ChatUpdateEventHandler(BaseEventHandler):
     def __init__(
         self, client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2
     ):
-        self._client = client
-        self._controller = controller
-        self._logger = Logger(self)
+        super().__init__(client, controller)
 
     def handle(self, event: Event):
         persist_chat_log_start = self._logger.log("Started persisting chat log")

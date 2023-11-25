@@ -19,16 +19,14 @@ class PublicChatObserver(BaseObserver):
     ):
         super().__init__(client, controller)
 
-    def poll(self) -> Optional[Event]:
+    def _poll(self) -> Optional[Event]:
         chat_log = self._fetch_most_recent_chat_log()
 
         if chat_log is None:
             return {"name": "chat-update"}
 
         scrape_public_chat_start = self._logger.log("Started scraping public chat")
-
         public_chat = self._controller.scrape_public_chat()
-
         scrape_public_chat_end = self._logger.log("Finished scraping public chat")
         self._logger.log_elapsed_time(scrape_public_chat_start, scrape_public_chat_end)
 

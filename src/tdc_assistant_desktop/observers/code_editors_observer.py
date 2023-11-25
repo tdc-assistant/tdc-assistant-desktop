@@ -18,7 +18,7 @@ class CodeEditorsObserver(BaseObserver):
     ):
         super().__init__(client, controller)
 
-    def poll(self) -> Optional[UpdateEditorsEvent]:
+    def _poll(self) -> Optional[UpdateEditorsEvent]:
         chat_log = self._fetch_most_recent_chat_log()
 
         if chat_log is None:

@@ -18,7 +18,7 @@ class WordProcessorsObserver(BaseObserver):
     ):
         super().__init__(client, controller)
 
-    def poll(self):
+    def _poll(self):
         chat_log = self._fetch_most_recent_chat_log()
 
         if chat_log is None:

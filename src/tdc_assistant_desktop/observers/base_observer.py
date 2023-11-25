@@ -34,5 +34,12 @@ class BaseObserver(metaclass=abc.ABCMeta):
         return chat_log
 
     @abc.abstractmethod
-    def poll(self) -> Optional[Event]:
+    def _poll(self) -> Optional[Event]:
         pass
+
+    def poll(self) -> Optional[Event]:
+        start = self._logger.log("Started")
+        result = self.poll()
+        end = self._logger.log("Finished")
+        self._logger.log_elapsed_time(start, end)
+        return result

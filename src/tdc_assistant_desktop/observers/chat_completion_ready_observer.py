@@ -15,7 +15,7 @@ class ChatCompletionReadyObserver(BaseObserver):
     ):
         super().__init__(client, controller)
 
-    def poll(self) -> Optional[Event]:
+    def _poll(self) -> Optional[Event]:
         # (1) Fetch most recent chat log
         chat_log = super()._fetch_most_recent_chat_log()
 

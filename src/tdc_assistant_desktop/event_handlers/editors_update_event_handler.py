@@ -2,16 +2,14 @@ from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiController
 from tdc_assistant_client.client import TdcAssistantClient
 from domain import Event
 
+from .base_event_handler import BaseEventHandler
 
-class CodeEditorsUpdateEventHandler:
-    _client: TdcAssistantClient
-    _controller: TdcAssistantGuiControllerV2
 
+class CodeEditorsUpdateEventHandler(BaseEventHandler):
     def __init__(
         self, client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2
     ):
-        self._client = client
-        self._controller = controller
+        super().__init__(client, controller)
 
     def handle(self, event: Event):
         payload = event.get("payload")

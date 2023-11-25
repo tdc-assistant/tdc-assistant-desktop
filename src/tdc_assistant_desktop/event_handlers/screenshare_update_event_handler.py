@@ -6,16 +6,14 @@ from tasks import fetch_most_recent_chat_log
 
 from domain import Event
 
+from .base_event_handler import BaseEventHandler
 
-class ScreenshareUpdateEventHandler:
-    _client: TdcAssistantClient
-    _controller: TdcAssistantGuiControllerV2
 
+class ScreenshareUpdateEventHandler(BaseEventHandler):
     def __init__(
         self, client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2
     ):
-        self._client = client
-        self._controller = controller
+        super().__init__(client, controller)
 
     def handle(self, event: Event):
         chat_log = fetch_most_recent_chat_log(self._client)

@@ -39,7 +39,7 @@ class BaseObserver(metaclass=abc.ABCMeta):
 
     def poll(self) -> Optional[Event]:
         start = self._logger.log("Started")
-        result = self.poll()
+        result = self._poll()
         end = self._logger.log("Finished")
         self._logger.log_elapsed_time(start, end)
         return result

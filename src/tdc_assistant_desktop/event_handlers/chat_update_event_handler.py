@@ -22,7 +22,7 @@ class ChatUpdateEventHandler(BaseEventHandler):
     ):
         super().__init__(client, controller)
 
-    def handle(self, event: Event):
+    def _handle(self, event: Event):
         persist_chat_log_start = self._logger.log("Started persisting chat log")
 
         chat_log = persist_chat_log(self._client, self._controller)

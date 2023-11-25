@@ -11,7 +11,7 @@ class WordProcessorsUpdateEventHandler(BaseEventHandler):
     ):
         super().__init__(client, controller)
 
-    def handle(self, event: Event):
+    def _handle(self, event: Event):
         payload = event.get("payload")
 
         if payload is None or not isinstance(payload, dict):

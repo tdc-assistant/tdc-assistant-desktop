@@ -14,19 +14,27 @@ def persist_code_editors(
     if len(messages) == 0:
         raise Exception(f"No messages exist for ChatLog: '{chat_log['id']}'")
 
-    workspaces = chat_log["workspaces"]
+    code_editors_from_client = [
+        w for w in chat_log["workspaces"] if w["type"] == "CODE_EDITOR"
+    ]
 
-    for i, editor in enumerate(controller.scrape_editor()):
-        if i < len(workspaces):
-            client.update_workspace(
-                workspace=workspaces[i],
-                content=editor["content"],
-            )
+    for controller_editor in controller.scrape_editor():
+        for client_editor in code_editors_from_client:
+            if (
+                client_editor["programming_language"]
+                == controller_editor["editor_language"]
+                and client_editor["editor_number"]
+                == controller_editor["editor_language"]
+            ):
+                # FIXME This should only update editors whose content differs
+                client.update_code_editor(
+                    code_editor=client_editor, content=controller_editor["content"]
+                )
+
         else:
-            client.create_workspace(
+            client.create_code_editor(
                 chat_log=chat_log,
-                board_number=editor["editor_number"],
-                content=editor["content"],
-                # FIXME
-                workspace_type="CODE_EDITOR",
+                editor_number=controller_editor["editor_number"],
+                programming_language=controller_editor["editor_language"],
+                content=controller_editor["content"],
             )

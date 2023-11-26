@@ -50,6 +50,9 @@ class ScreenshareObserver(BaseObserver):
         most_recent_image_capture_annotation = (
             self._fetch_most_recent_image_capture_annotation()
         )
+        print(
+            "most_recent_image_capture_annotation", most_recent_image_capture_annotation
+        )
 
         if most_recent_image_capture_annotation is None:
             # Screenshare window is open but an image capture has not been created yet

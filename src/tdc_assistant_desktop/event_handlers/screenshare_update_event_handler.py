@@ -30,6 +30,12 @@ class ScreenshareUpdateEventHandler(BaseEventHandler):
         screenshare = self._controller.scrape_screenshare()
         print("[_create_image_capture_for_message] screenshare", screenshare)
         if screenshare is not None:
-            self._client.create_image_capture_annotation(
-                message=message, image_url=screenshare["image_url"]
+            create_image_capture_annotation_result = (
+                self._client.create_image_capture_annotation(
+                    message=message, image_url=screenshare["image_url"]
+                )
+            )
+            print(
+                "[_create_image_capture_for_message] create_image_capture_annotation_result",
+                create_image_capture_annotation_result,
             )

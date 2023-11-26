@@ -50,9 +50,9 @@ class ChatCompletionReadyEventHandler(BaseEventHandler):
                 ce for ce in chat_log["workspaces"] if ce["type"] == "CODE_EDITOR"
             ]
             if len(code_editors) > 0:
-                code_editors.sort(key=lambda x: x["updatedAt"], reverse=True)
-                active_code_language = code_editors[0]["programming_language"]
-                active_code_editor_number = code_editors[0]["editor_number"]
+                code_editors.sort(key=lambda x: x["createdAt"], reverse=True)
+                active_code_language = code_editors[0]["programmingLanguage"]
+                active_code_editor_number = code_editors[0]["editorNumber"]
             else:
                 # TODO Have this add a language other than Java and `insert_code_editor` should return the language and number
                 self._controller.insert_code_editor()

@@ -36,8 +36,8 @@ class CodeEditorsObserver(BaseObserver):
         for ccef in code_editors_from_controller:
             for ccec in code_editors_from_client:
                 found_editor = (
-                    ccef["editor_language"] == ccec["programming_language"]
-                    and ccef["editor_number"] == ccec["editor_number"]
+                    ccef["editor_language"] == ccec["programmingLanguage"]
+                    and ccef["editor_number"] == ccec["editorNumber"]
                 )
                 if found_editor:
                     if ccef["content"] != ccec["content"]:

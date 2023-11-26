@@ -21,11 +21,11 @@ from event_handlers import (
 
 def run(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2) -> None:
     observers = [
-        PublicChatObserver(client, controller),
         ChatCompletionReadyObserver(client, controller),
         CodeEditorsObserver(client, controller),
         ScreenshareObserver(client, controller),
         WordProcessorsObserver(client, controller),
+        PublicChatObserver(client, controller),
     ]
     event_handlers: dict[
         str,
@@ -39,13 +39,13 @@ def run(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2) -> 
             ]
         ],
     ] = {
-        "chat-update": [ChatUpdateEventHandler(client, controller)],
         "chat-completion-ready": [ChatCompletionReadyEventHandler(client, controller)],
         "screenshare-update": [ScreenshareUpdateEventHandler(client, controller)],
         "editors-update": [CodeEditorsUpdateEventHandler(client, controller)],
         "word-processors-update": [
             WordProcessorsUpdateEventHandler(client, controller)
         ],
+        "chat-update": [ChatUpdateEventHandler(client, controller)],
     }
 
     while True:

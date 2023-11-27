@@ -12,30 +12,30 @@ from .fetch_most_recent_chat_log import fetch_most_recent_chat_log
 from utils import is_same_chat
 
 
-def persist_chat_log(
+def persist_chat_log_messages(
     client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2
 ) -> ChatLog:
     public_chat = controller.scrape_public_chat()
-
     chat_log = fetch_most_recent_chat_log(client)
+
     if chat_log is None or not is_same_chat(public_chat, chat_log):
         # TODO Should be able to create a chat log without a customer name
         optional_customer_name = _get_customer_name_from_public_chat(public_chat)
-        chat_log = client.create_chat_log(customer_name=optional_customer_name or "")
+        chat_log = client.create_chat_log(
+            customer_name=optional_customer_name or "", raw_text=public_chat["raw_text"]
+        )
         update_chat_log_ids(chat_log_id=chat_log["id"])
 
-    # Persist messages from `PublicChat` to `ChatLog`
-    # TODO Should be able to create messges in bulk and send messges along with
-    # initial request to create a `ChatLog`
-    num_old_messages = len(chat_log["messages"])
-    new_messages = public_chat["messages"][num_old_messages:]
-    for message in new_messages:
-        participant = message["participant"]
-        client.create_message(
-            chat_log_id=chat_log["id"],
-            role=_participant_type_to_message_role_map[participant["type"]],
-            content=message["content"],
-        )
+    client.create_messages(
+        messages=[
+            {
+                "chat_log_id": chat_log["id"],
+                "content": m["content"],
+                "role": _participant_type_to_message_role_map[m["participant"]["type"]],
+            }
+            for m in public_chat["messages"]
+        ]
+    )
 
     return client.get_chat_log(chat_log_id=chat_log["id"])
 

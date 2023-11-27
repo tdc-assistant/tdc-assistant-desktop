@@ -8,7 +8,7 @@ from tdc_assistant_client.client import TdcAssistantClient
 from tdc_assistant_client.domain import ChatLog, Message
 
 from tasks import (
-    persist_chat_log,
+    persist_chat_log_messages,
     persist_code_editors,
     create_chat_completion_annotation,
 )
@@ -89,7 +89,7 @@ class ChatUpdateEventHandler(BaseEventHandler):
     def _handle(self, event: Event):
         persist_chat_log_start = self._logger.log("Started persisting chat log")
 
-        chat_log = persist_chat_log(self._client, self._controller)
+        chat_log = persist_chat_log_messages(self._client, self._controller)
 
         persist_chat_log_end = self._logger.log("Finished persisting chat log")
         self._logger.log_elapsed_time(persist_chat_log_start, persist_chat_log_end)

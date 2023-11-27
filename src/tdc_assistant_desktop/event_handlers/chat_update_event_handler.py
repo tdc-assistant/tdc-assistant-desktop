@@ -1,8 +1,11 @@
+from typing import List
+
 from time import sleep
 
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
 
 from tdc_assistant_client.client import TdcAssistantClient
+from tdc_assistant_client.domain import ChatLog, Message
 
 from tasks import (
     persist_chat_log,
@@ -14,6 +17,7 @@ from logger import Logger
 from domain import Event
 
 from .base_event_handler import BaseEventHandler
+from utils import get_prescripted_message, PRESCRIPTED_MESSAGES
 
 
 class ChatUpdateEventHandler(BaseEventHandler):
@@ -22,23 +26,10 @@ class ChatUpdateEventHandler(BaseEventHandler):
     ):
         super().__init__(client, controller)
 
-    def _handle(self, event: Event):
-        persist_chat_log_start = self._logger.log("Started persisting chat log")
+    def _get_tutor_messages_from_chat_log(self, chat_log: ChatLog) -> List[Message]:
+        return [m for m in chat_log["messages"] if m["role"] == "assistant"]
 
-        chat_log = persist_chat_log(self._client, self._controller)
-
-        persist_chat_log_end = self._logger.log("Finished persisting chat log")
-        self._logger.log_elapsed_time(persist_chat_log_start, persist_chat_log_end)
-
-        persist_code_editors_start = self._logger.log("Started persisting code editors")
-
-        persist_code_editors(self._client, self._controller, chat_log)
-
-        persist_code_editors_end = self._logger.log("Finished persisting code editors")
-        self._logger.log_elapsed_time(
-            persist_code_editors_start, persist_code_editors_end
-        )
-
+    def _create_chat_completion(self, chat_log: ChatLog):
         create_chat_completion_start = self._logger.log(
             "Started creating chat completion"
         )
@@ -94,3 +85,28 @@ class ChatUpdateEventHandler(BaseEventHandler):
             approve_chat_completion_annotation_start,
             approve_chat_completion_annotation_end,
         )
+
+    def _handle(self, event: Event):
+        persist_chat_log_start = self._logger.log("Started persisting chat log")
+
+        chat_log = persist_chat_log(self._client, self._controller)
+
+        persist_chat_log_end = self._logger.log("Finished persisting chat log")
+        self._logger.log_elapsed_time(persist_chat_log_start, persist_chat_log_end)
+
+        persist_code_editors_start = self._logger.log("Started persisting code editors")
+
+        persist_code_editors(self._client, self._controller, chat_log)
+
+        persist_code_editors_end = self._logger.log("Finished persisting code editors")
+        self._logger.log_elapsed_time(
+            persist_code_editors_start, persist_code_editors_end
+        )
+
+        num_tutor_messages = len(self._get_tutor_messages_from_chat_log(chat_log))
+        should_send_prescripted_message = num_tutor_messages < len(PRESCRIPTED_MESSAGES)
+
+        if should_send_prescripted_message:
+            self._controller.send_message(get_prescripted_message(num_tutor_messages))
+        else:
+            self._create_chat_completion(chat_log)

@@ -2,6 +2,9 @@ from typing import Union
 
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
 from tdc_assistant_client.client import TdcAssistantClient
+from tdc_assistant_session_request_controller.controller import (
+    controller as session_request_controller,
+)
 
 from observers import (
     PublicChatObserver,
@@ -47,6 +50,9 @@ def run(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2) -> 
             WordProcessorsUpdateEventHandler(client, controller)
         ],
     }
+
+    while not session_request_controller.should_terminate():
+        session_request_controller.run()
 
     while True:
         for observer in observers:

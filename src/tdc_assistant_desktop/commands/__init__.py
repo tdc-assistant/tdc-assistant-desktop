@@ -13,6 +13,7 @@ from .scrape_word_processors import *
 from .create_word_processor import *
 from .create_image_capture import *
 from .create_chat_completion_mock_controller import *
+from .find_chat_log_by_id import *
 
 
 commands: list[Command] = [
@@ -33,4 +34,5 @@ commands: list[Command] = [
         "label": "Create Chat Completion Mock Controller",
         "handler": create_chat_completion_mock_controller,
     },
+    {"label": "Find Chat Log by ID", "handler": find_chat_log_by_id},
 ]

@@ -96,10 +96,8 @@ class ChatUpdateEventHandler(BaseEventHandler):
             persist_code_editors_start, persist_code_editors_end
         )
 
-        num_tutor_messages = len(self._get_tutor_messages_from_chat_log(chat_log))
-        should_send_prescripted_message = num_tutor_messages < len(PRESCRIPTED_MESSAGES)
-
-        if should_send_prescripted_message:
+        if event["type"] == "prescripted-message":  # type: ignore
+            num_tutor_messages = len(self._get_tutor_messages_from_chat_log(chat_log))
             self._controller.send_message(get_prescripted_message(num_tutor_messages))
         else:
             self._create_chat_completion(chat_log)

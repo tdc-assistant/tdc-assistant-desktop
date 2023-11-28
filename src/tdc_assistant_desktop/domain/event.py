@@ -8,6 +8,7 @@ from .update_word_processor_payload import UpdateWordProcessorPayload
 
 class ChatUpdateEvent(TypedDict):
     name: Literal["chat-update"]
+    type: Union[Literal["prescripted-message"], Literal["chat-completion"]]
 
 
 class ChatCompletionReadyEvent(TypedDict):

@@ -9,6 +9,8 @@ from domain import Event
 
 from .base_observer import BaseObserver
 
+from utils import PRESCRIPTED_MESSAGES
+
 
 class PublicChatObserver(BaseObserver):
     _client: TdcAssistantClient
@@ -23,12 +25,21 @@ class PublicChatObserver(BaseObserver):
         chat_log = self._fetch_most_recent_chat_log()
 
         if chat_log is None:
-            return {"name": "chat-update"}
+            return {"name": "chat-update", "type": "prescripted-message"}
 
         scrape_public_chat_start = self._logger.log("Started scraping public chat")
         public_chat = self._controller.scrape_public_chat()
         scrape_public_chat_end = self._logger.log("Finished scraping public chat")
         self._logger.log_elapsed_time(scrape_public_chat_start, scrape_public_chat_end)
+
+        tutor_messages = [
+            m for m in public_chat["messages"] if m["participant"]["type"] == "tutor"
+        ]
+        event_type = (
+            "prescripted-message"
+            if len(tutor_messages) < len(PRESCRIPTED_MESSAGES)
+            else "chat-completion"
+        )
 
         # Only create a "chat-update" event if the last message was sent by the student
         messages = public_chat["messages"]
@@ -36,10 +47,11 @@ class PublicChatObserver(BaseObserver):
             return None
 
         most_recent_message = messages[-1]
-        if most_recent_message["participant"]["type"] == "student":
-            return {"name": "chat-update"}
+        last_message_sent_by_student = (
+            most_recent_message["participant"]["type"] == "student"
+        )
 
-        if not is_same_chat(public_chat, chat_log):
-            return {"name": "chat-update"}
+        if last_message_sent_by_student:
+            return {"name": "chat-update", "type": event_type}  # type: ignore
 
         return None

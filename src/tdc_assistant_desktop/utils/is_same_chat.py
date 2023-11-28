@@ -6,6 +6,9 @@ def is_same_chat(public_chat: PublicChat, chat_log: ChatLog) -> bool:
     raw_text_controller = public_chat["raw_text"]
     raw_text_client = chat_log["rawText"]
 
+    if raw_text_client is None:
+        return False
+
     raw_text_client_len = len(raw_text_client)
     raw_text_controller_len = len(raw_text_controller)
     if raw_text_client_len > raw_text_controller_len:

@@ -1,6 +1,5 @@
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
 from tdc_assistant_client.client import TdcAssistantClient
-from tdc_assistant_client.domain import Message
 
 from tasks import fetch_most_recent_chat_log
 
@@ -23,13 +22,10 @@ class ScreenshareUpdateEventHandler(BaseEventHandler):
 
         for message in reversed(chat_log["messages"]):
             if message["role"] == "user":
-                self._create_image_capture_for_message(message)
-                return
-
-    def _create_image_capture_for_message(self, message: Message):
-        screenshare = self._controller.scrape_screenshare()
-
-        if screenshare is not None:
-            self._client.create_image_capture_annotation(
-                message=message, image_url=screenshare["image_url"]
-            )
+                screenshare = self._controller.scrape_screenshare()
+                if screenshare is not None:
+                    self._client.create_image_capture(
+                        chat_log=chat_log,
+                        type="SCREENSHARE",
+                        image_url=screenshare["image_url"],
+                    )

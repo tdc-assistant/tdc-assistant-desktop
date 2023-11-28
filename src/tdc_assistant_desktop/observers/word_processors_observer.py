@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Any
 
 from tdc_assistant_client.client import TdcAssistantClient
 from tdc_assistant_client.domain import WordProcessor

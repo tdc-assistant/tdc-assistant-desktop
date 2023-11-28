@@ -37,10 +37,7 @@ class ChatCompletionReadyObserver(BaseObserver):
             most_recent_chat_completion_start, most_recent_chat_completion_end
         )
 
-        if most_recent_approved_chat_completion is None:
-            return None
-
-        if most_recent_approved_chat_completion["sentAt"] is None:
+        if most_recent_approved_chat_completion is not None:
             return {"name": "chat-completion-ready"}
 
         return None

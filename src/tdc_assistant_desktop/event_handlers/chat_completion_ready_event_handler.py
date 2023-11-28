@@ -32,16 +32,15 @@ class ChatCompletionReadyEventHandler(BaseEventHandler):
         if chat_completion is None:
             return
 
-        # Before responding check if any code part is present if so then check if there is an available code editor
-        # to write in .. if there is not then add a new code editor and use that
+        unsent_chat_completion_parts = [
+            p for p in chat_completion["parts"] if not p["sentAt"]
+        ]
 
-        is_code_part_present = (
-            len([p for p in chat_completion["parts"] if p["type"] == "CODE"]) > 0
-        )
+        chat_completion_part = unsent_chat_completion_parts[0]
 
         active_code_language = "Java"
         active_code_editor_number = 1
-        if is_code_part_present:
+        if chat_completion_part["type"] == "CODE":
             code_editors = [
                 ce for ce in chat_log["workspaces"] if ce["type"] == "CODE_EDITOR"
             ]
@@ -53,21 +52,20 @@ class ChatCompletionReadyEventHandler(BaseEventHandler):
                 # TODO Have this add a language other than Java and `insert_code_editor` should return the language and number
                 self._controller.insert_code_editor()
 
-        for i, part in enumerate(chat_completion["parts"]):
-            if part["type"] == "CONVERSATION":
-                self._controller.send_message(part["content"])
+        if chat_completion_part["type"] == "CONVERSATION":
+            self._controller.send_message(chat_completion_part["content"])
 
-            else:
-                self._controller.send_text_to_code_editor(
-                    editor_language=active_code_language,
-                    editor_number=active_code_editor_number,
-                    text=part["content"],
-                )
-            if i < len(chat_completion["parts"]) - 1:
-                sleep(randint(10, 25))
+        else:
+            self._controller.send_text_to_code_editor(
+                editor_language=active_code_language,
+                editor_number=active_code_editor_number,
+                text=chat_completion_part["content"],
+            )
 
-        self._client.update_chat_completion(
-            chat_completion=chat_completion, sent_at=datetime.now(timezone.utc)
+        self._client.update_chat_completion_part(
+            chat_completion_part=chat_completion_part,
+            sent_at=datetime.now(timezone.utc),
+            should_omit=None,
         )
 
         # TODO Need to add something like this later when an `status` field has been added

@@ -20,12 +20,12 @@ class ScreenshareUpdateEventHandler(BaseEventHandler):
         if chat_log is None:
             return
 
-        for message in reversed(chat_log["messages"]):
-            if message["role"] == "user":
-                screenshare = self._controller.scrape_screenshare()
-                if screenshare is not None:
-                    self._client.create_image_capture(
-                        chat_log=chat_log,
-                        type="SCREENSHARE",
-                        image_url=screenshare["image_url"],
-                    )
+        # TODO Should do something here so a new screenshare capture is generate for every message
+
+        screenshare = self._controller.scrape_screenshare()
+        if screenshare is not None:
+            self._client.create_image_capture(
+                chat_log=chat_log,
+                type="SCREENSHARE",
+                image_url=screenshare["image_url"],
+            )

@@ -103,11 +103,9 @@ def run(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2) -> 
                                 chat_completion_event
                             )
                         break
-            else:
-                chat_completion_event = chat_completion_ready_observer.poll()
+        else:
+            chat_completion_event = chat_completion_ready_observer.poll()
 
-                if chat_completion_event is not None:
-                    if chat_completion_event["name"] == "chat-completion-ready":
-                        chat_completion_ready_event_handler.handle(
-                            chat_completion_event
-                        )
+            if chat_completion_event is not None:
+                if chat_completion_event["name"] == "chat-completion-ready":
+                    chat_completion_ready_event_handler.handle(chat_completion_event)

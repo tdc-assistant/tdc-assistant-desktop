@@ -27,14 +27,10 @@ class ChatCompletionReadyEventHandler(BaseEventHandler):
         if chat_log is None:
             return
 
-        chat_completion_annotation = find_most_recent_approved_chat_completion(chat_log)
+        chat_completion = find_most_recent_approved_chat_completion(chat_log)
 
-        if chat_completion_annotation is None:
-            return
-
-        chat_completion = chat_completion_annotation["chatCompletion"]
         if chat_completion is None:
-            return None
+            return
 
         # Before responding check if any code part is present if so then check if there is an available code editor
         # to write in .. if there is not then add a new code editor and use that
@@ -57,7 +53,7 @@ class ChatCompletionReadyEventHandler(BaseEventHandler):
                 # TODO Have this add a language other than Java and `insert_code_editor` should return the language and number
                 self._controller.insert_code_editor()
 
-        for part in chat_completion["parts"]:
+        for i, part in enumerate(chat_completion["parts"]):
             if part["type"] == "CONVERSATION":
                 self._controller.send_message(part["content"])
 
@@ -67,10 +63,16 @@ class ChatCompletionReadyEventHandler(BaseEventHandler):
                     editor_number=active_code_editor_number,
                     text=part["content"],
                 )
-            sleep(randint(10, 25))
+            if i < len(chat_completion["parts"]) - 1:
+                sleep(randint(10, 25))
 
-        self._client.update_chat_completion_annotation(
-            chat_completion_annotation=chat_completion_annotation,
-            sent_at=datetime.now(timezone.utc),
-            approval_status="APPROVED",
+        self._client.update_chat_completion(
+            chat_completion=chat_completion, sent_at=datetime.now(timezone.utc)
         )
+
+        # TODO Need to add something like this later when an `status` field has been added
+        # self._client.update_chat_completion_annotation(
+        #     chat_completion_annotation=chat_completion,
+        #     sent_at=datetime.now(timezone.utc),
+        #     approval_status="APPROVED",
+        # )

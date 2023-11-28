@@ -8,7 +8,7 @@ from tdc_assistant_client.client import TdcAssistantClient
 from tdc_assistant_client.domain import ChatLog, Message
 
 from tasks import (
-    persist_chat_log,
+    persist_chat_log_messages,
     persist_code_editors,
     create_chat_completion_annotation,
 )
@@ -34,9 +34,7 @@ class ChatUpdateEventHandler(BaseEventHandler):
             "Started creating chat completion"
         )
 
-        chat_completion_annotation = create_chat_completion_annotation(
-            self._client, chat_log
-        )
+        chat_completion = self._client.create_chat_completion(chat_log=chat_log)
 
         create_chat_completion_end = self._logger.log(
             "Finished creating chat completion"
@@ -45,13 +43,9 @@ class ChatUpdateEventHandler(BaseEventHandler):
             create_chat_completion_start, create_chat_completion_end
         )
 
-        if chat_completion_annotation is None:
-            print("Failed to create chat completion creation")
-            return None
-
-        chat_completion = chat_completion_annotation["chatCompletion"]
         if chat_completion is None:
-            return
+            print("Failed to create chat completion")
+            return None
 
         for part in chat_completion["parts"]:
             print(f'[{part["type"]}]')
@@ -62,34 +56,33 @@ class ChatUpdateEventHandler(BaseEventHandler):
         # if not should_send:
         #     return None
 
-        should_send = True
-        sleep(3)
+        # should_send = True
+        # sleep(3)
 
-        approve_chat_completion_annotation_start = self._logger.log(
-            "Started approving chat completion annotation"
-        )
+        # approve_chat_completion_annotation_start = self._logger.log(
+        #     "Started approving chat completion annotation"
+        # )
 
-        # TODO Add something here to prompt user to approve
-        # Should be conditional based on env var
+        # TODO Need to add something like this back in to approve the chat completion
 
-        self._client.update_chat_completion_annotation(
-            chat_completion_annotation=chat_completion_annotation,
-            sent_at=None,
-            approval_status="APPROVED",
-        )
+        # self._client.update_chat_completion_annotation(
+        #     chat_completion_annotation=chat_completion_annotation,
+        #     sent_at=None,
+        #     approval_status="APPROVED",
+        # )
 
-        approve_chat_completion_annotation_end = self._logger.log(
-            "Finished approving chat completion annotation"
-        )
-        self._logger.log_elapsed_time(
-            approve_chat_completion_annotation_start,
-            approve_chat_completion_annotation_end,
-        )
+        # approve_chat_completion_annotation_end = self._logger.log(
+        #     "Finished approving chat completion annotation"
+        # )
+        # self._logger.log_elapsed_time(
+        #     approve_chat_completion_annotation_start,
+        #     approve_chat_completion_annotation_end,
+        # )
 
     def _handle(self, event: Event):
         persist_chat_log_start = self._logger.log("Started persisting chat log")
 
-        chat_log = persist_chat_log(self._client, self._controller)
+        chat_log = persist_chat_log_messages(self._client, self._controller)
 
         persist_chat_log_end = self._logger.log("Finished persisting chat log")
         self._logger.log_elapsed_time(persist_chat_log_start, persist_chat_log_end)

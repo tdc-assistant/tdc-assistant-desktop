@@ -3,25 +3,14 @@ from tdc_assistant_gui_controller_v2.public_chat import PublicChat
 
 
 def is_same_chat(public_chat: PublicChat, chat_log: ChatLog) -> bool:
-    public_chat_messages = public_chat["messages"]
-    chat_log_messages = chat_log["messages"]
+    raw_text_controller = public_chat["raw_text"]
+    raw_text_client = chat_log["rawText"]
 
-    num_public_chat_messages = len(public_chat_messages)
-    num_chat_log_messages = len(chat_log_messages)
-
-    # If they are from the same chat, then the number of messages scraped from
-    # the public chat will never exceed the number of messages saved to the chat log
-    is_valid_message_count = num_public_chat_messages <= num_chat_log_messages
-    if not is_valid_message_count:
+    raw_text_client_len = len(raw_text_client)
+    raw_text_controller_len = len(raw_text_controller)
+    if raw_text_client_len > raw_text_controller_len:
         return False
 
-    # Check that the content from each message saved in the chat log is the same
-    # as the content scraped from the public chat
-    for i in range(num_public_chat_messages):
-        public_chat_message = public_chat_messages[i]
-        chat_log_message = chat_log_messages[i]
-
-        if public_chat_message["content"] != chat_log_message["content"]:
-            return False
-
-    return True
+    # Why? Because the messages added to the raw text are added at the front,
+    # not at the end, which is the opposite of how you would expect it to work.
+    return raw_text_client == raw_text_controller[-raw_text_client_len:]

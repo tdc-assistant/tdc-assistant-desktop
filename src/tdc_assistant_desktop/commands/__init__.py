@@ -11,6 +11,8 @@ from .send_text_to_code_editor import *
 from .create_code_editor import *
 from .scrape_word_processors import *
 from .create_word_processor import *
+from .create_image_capture import *
+from .create_chat_completion_mock_controller import *
 
 
 commands: list[Command] = [
@@ -26,4 +28,9 @@ commands: list[Command] = [
     {"label": "Create Code Editor", "handler": create_code_editor},
     {"label": "Scrape Word Processors", "handler": scrape_word_processors},
     {"label": "Create Word Processors", "handler": create_word_processor},
+    {"label": "Create Image Capture", "handler": create_image_capture},
+    {
+        "label": "Create Chat Completion Mock Controller",
+        "handler": create_chat_completion_mock_controller,
+    },
 ]

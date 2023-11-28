@@ -12,4 +12,4 @@ def create_chat_completion_annotation(
     if len(chat_log_messages) == 0:
         return None
 
-    return client.create_chat_completion_annotation(message=chat_log["messages"][-1])
+    return client.create_chat_completion(chat_log=chat_log)

@@ -6,6 +6,7 @@ from tdc_assistant_session_request_controller.controller import (
     controller as session_request_controller,
 )
 
+
 from observers import (
     PublicChatObserver,
     ChatCompletionReadyObserver,
@@ -94,15 +95,17 @@ def run(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2) -> 
                 # to see if another message has been sent ... although calling `chat_update_event_handler.handle`
                 # above after scraping everything does serve as a debouncing step since there will be some
                 # delay before the chat is scraped again
-                while True:
-                    chat_completion_event = chat_completion_ready_observer.poll()
 
-                    if chat_completion_event is not None:
-                        if chat_completion_event["name"] == "chat-completion-ready":
-                            chat_completion_ready_event_handler.handle(
-                                chat_completion_event
-                            )
-                        break
+                if public_chat_event["type"] == "chat-completion":
+                    while True:
+                        chat_completion_event = chat_completion_ready_observer.poll()
+
+                        if chat_completion_event is not None:
+                            if chat_completion_event["name"] == "chat-completion-ready":
+                                chat_completion_ready_event_handler.handle(
+                                    chat_completion_event
+                                )
+                            break
         else:
             chat_completion_event = chat_completion_ready_observer.poll()
 

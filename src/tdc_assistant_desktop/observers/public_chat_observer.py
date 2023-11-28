@@ -36,8 +36,8 @@ class PublicChatObserver(BaseObserver):
             return None
 
         most_recent_message = messages[-1]
-        if most_recent_message["participant"]["type"] != "student":
-            return None
+        if most_recent_message["participant"]["type"] == "student":
+            return {"name": "chat-update"}
 
         if not is_same_chat(public_chat, chat_log):
             return {"name": "chat-update"}

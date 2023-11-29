@@ -52,7 +52,15 @@ class ChatUpdateEventHandler(BaseEventHandler):
             print(part["content"])
             print()
 
-        self._client.request_chat_completion_approval(chat_completion=chat_completion)
+        while True:
+            try:
+                self._client.request_chat_completion_approval(
+                    chat_completion=chat_completion
+                )
+                break
+            except:
+                print("Retrying chat completion creation....")
+                sleep(5)
 
         # should_send = input("Send chat completion (y/[N])? ").strip().lower() == "y"
         # if not should_send:

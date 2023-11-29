@@ -18,8 +18,8 @@ class WordProcessorsUpdateEventHandler(BaseEventHandler):
             return None
 
         chat_log = payload["chat_log"]
-        word_processors_to_create = payload["word_processors_to_create"]
-        word_processors_to_update = payload["word_processors_to_update"]
+        word_processors_to_create = payload["editors_to_create"]
+        word_processors_to_update = payload["editors_to_update"]
 
         for word_processor_to_create in word_processors_to_create:
             self._client.create_word_processor(

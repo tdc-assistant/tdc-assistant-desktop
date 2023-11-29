@@ -32,6 +32,13 @@ class ChatCompletionReadyEventHandler(BaseEventHandler):
         if chat_completion is None:
             return
 
+        chat_completion_approval_status = chat_completion["approvalStatus"]
+        self._logger.log(
+            f"Chat Completion approval status: '{chat_completion_approval_status}'"
+        )
+        if chat_completion_approval_status != "APPROVED":
+            return None
+
         unsent_chat_completion_parts = [
             p for p in chat_completion["parts"] if not p["sentAt"]
         ]

@@ -11,6 +11,8 @@ def find_most_recent_approved_chat_completion(
 
     if len(chat_completions) > 0:
         last_chat_completion = chat_completions[-1]
+        if last_chat_completion["approvalStatus"] != "APPROVED":
+            return None
         unsent_chat_completion_parts = [
             p for p in last_chat_completion["parts"] if p["sentAt"] is None
         ]

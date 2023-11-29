@@ -21,9 +21,9 @@ def persist_code_editors(
     for controller_editor in controller.scrape_editor():
         for client_editor in code_editors_from_client:
             if (
-                client_editor["programming_language"]
+                client_editor["programmingLanguage"]
                 == controller_editor["editor_language"]
-                and client_editor["editor_number"]
+                and client_editor["editorNumber"]
                 == controller_editor["editor_language"]
             ):
                 # FIXME This should only update editors whose content differs

@@ -30,37 +30,40 @@ class ChatUpdateEventHandler(BaseEventHandler):
         return [m for m in chat_log["messages"] if m["role"] == "assistant"]
 
     def _create_chat_completion(self, chat_log: ChatLog):
-        create_chat_completion_start = self._logger.log(
-            "Started creating chat completion"
-        )
-
-        chat_completion = self._client.create_chat_completion(chat_log=chat_log)
-
-        create_chat_completion_end = self._logger.log(
-            "Finished creating chat completion"
-        )
-        self._logger.log_elapsed_time(
-            create_chat_completion_start, create_chat_completion_end
-        )
-
-        if chat_completion is None:
-            print("Failed to create chat completion")
-            return None
-
-        for part in chat_completion["parts"]:
-            print(f'[{part["type"]}]')
-            print(part["content"])
-            print()
-
         while True:
-            try:
-                self._client.request_chat_completion_approval(
-                    chat_completion=chat_completion
-                )
-                break
-            except:
-                print("Retrying chat completion creation....")
-                sleep(5)
+            create_chat_completion_start = self._logger.log(
+                "Started creating chat completion"
+            )
+
+            chat_completion = self._client.create_chat_completion(chat_log=chat_log)
+
+            create_chat_completion_end = self._logger.log(
+                "Finished creating chat completion"
+            )
+
+            self._logger.log_elapsed_time(
+                create_chat_completion_start, create_chat_completion_end
+            )
+
+            if chat_completion is None:
+                print("Failed to create chat completion")
+                continue
+
+            for part in chat_completion["parts"]:
+                print(f'[{part["type"]}]')
+                print(part["content"])
+                print()
+
+            while True:
+                try:
+                    chat_completion = self._client.request_chat_completion_approval(
+                        chat_completion=chat_completion
+                    )
+                    if chat_completion["approvalStatus"] == "APPROVED":
+                        return
+                except:
+                    print("Retrying chat completion approval....")
+                    sleep(5)
 
         # should_send = input("Send chat completion (y/[N])? ").strip().lower() == "y"
         # if not should_send:

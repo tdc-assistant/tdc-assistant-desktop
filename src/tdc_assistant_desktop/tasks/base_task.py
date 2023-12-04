@@ -36,7 +36,7 @@ class BaseTask(metaclass=abc.ABCMeta):
         pass
 
     @abc.abstractmethod
-    def _get_time_since_last_update(self, chat_log: ChatLog) -> datetime:
+    def _get_time_since_last_update(self, chat_log: ChatLog) -> Optional[datetime]:
         pass
 
     def execute(self, chat_log: Optional[ChatLog]) -> ChatLog:
@@ -44,9 +44,13 @@ class BaseTask(metaclass=abc.ABCMeta):
             self._interval_between_execution_in_seconds is not None
             and chat_log is not None
         ):
-            if self._get_time_since_last_update(chat_log) >= datetime.now(
-                timezone.utc
-            ) - timedelta(seconds=self._interval_between_execution_in_seconds):
+            time_since_last_update = self._get_time_since_last_update(chat_log)
+            if (
+                time_since_last_update is not None
+                and time_since_last_update
+                >= datetime.now(timezone.utc)
+                - timedelta(seconds=self._interval_between_execution_in_seconds)
+            ):
                 return chat_log  # type: ignore
 
         start = self._logger.log("Started")

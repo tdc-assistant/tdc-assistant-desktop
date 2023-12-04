@@ -26,7 +26,7 @@ class CheckScreenshareTask(BaseTask):
         ]
 
         if len(times) == 0:
-            return datetime.now()
+            return datetime.now(timezone.utc)
         return max(times)
 
     def _execute(self, chat_log: Optional[ChatLog]) -> ChatLog:

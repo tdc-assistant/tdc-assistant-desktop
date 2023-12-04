@@ -28,7 +28,7 @@ class CheckCodeEditorsTask(BaseTask):
         ]
 
         if len(times) == 0:
-            return datetime.now()
+            return datetime.now(timezone.utc)
         return min(times)
 
     def _execute(self, chat_log: Optional[ChatLog]) -> ChatLog:

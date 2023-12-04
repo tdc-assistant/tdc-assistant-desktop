@@ -24,8 +24,8 @@ Task = Union[
 def run(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2) -> None:
     initialize_session = InitializeSession(client, controller)
 
+    check_public_chat_task = CheckPublicChat(client, controller)
     tasks: List[Task] = [
-        CheckPublicChat(client, controller),
         CheckCodeEditorsTask(client, controller, 30.0),
         CheckScreenshareTask(client, controller, 45.0),
         CheckWordProcessorTask(client, controller, 30.0),
@@ -37,5 +37,6 @@ def run(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2) -> 
     chat_log = initialize_session.execute(fetch_most_recent_chat_log(client))
     i = 0
     while True:
+        chat_log = check_public_chat_task.execute(chat_log)
         chat_log = tasks[i].execute(chat_log)
         i = (i + 1) % len(tasks)

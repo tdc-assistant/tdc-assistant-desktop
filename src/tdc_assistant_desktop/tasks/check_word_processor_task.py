@@ -19,13 +19,15 @@ class CheckWordProcessorTask(BaseTask):
         super().__init__(client, controller, interval_between_execution_in_seconds)
 
     def _get_time_since_last_update(self, chat_log: ChatLog) -> datetime:
-        return min(
-            [
-                w["updatedAt"] or w["createdAt"]
-                for w in chat_log["workspaces"]
-                if w["type"] == "WORD_PROCESSOR"
-            ]
-        )
+        times = [
+            w["updatedAt"] or w["createdAt"]
+            for w in chat_log["workspaces"]
+            if w["type"] == "WORD_PROCESSOR"
+        ]
+
+        if len(times) == 0:
+            return datetime.now(timezone.utc)
+        return min(times)
 
     def _execute(self, chat_log: Optional[ChatLog]) -> ChatLog:
         if chat_log is None:

@@ -20,7 +20,7 @@ class CheckCodeEditorsTask(BaseTask):
     ):
         super().__init__(client, controller, interval_between_execution_in_seconds)
 
-    def _get_time_since_last_update(self, chat_log: ChatLog) -> datetime:
+    def _get_time_since_last_update(self, chat_log: ChatLog) -> Optional[datetime]:
         times = [
             w["updatedAt"] or w["createdAt"]
             for w in chat_log["workspaces"]
@@ -28,7 +28,7 @@ class CheckCodeEditorsTask(BaseTask):
         ]
 
         if len(times) == 0:
-            return datetime.now(timezone.utc)
+            return None
         return min(times)
 
     def _execute(self, chat_log: Optional[ChatLog]) -> ChatLog:

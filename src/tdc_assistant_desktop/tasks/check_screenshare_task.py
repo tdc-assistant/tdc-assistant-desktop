@@ -18,7 +18,7 @@ class CheckScreenshareTask(BaseTask):
     ):
         super().__init__(client, controller, interval_between_execution_in_seconds)
 
-    def _get_time_since_last_update(self, chat_log: ChatLog) -> datetime:
+    def _get_time_since_last_update(self, chat_log: ChatLog) -> Optional[datetime]:
         times = [
             ic["updatedAt"] or ic["createdAt"]
             for ic in chat_log["imageCaptures"]
@@ -26,7 +26,7 @@ class CheckScreenshareTask(BaseTask):
         ]
 
         if len(times) == 0:
-            return datetime.now(timezone.utc)
+            return None
         return max(times)
 
     def _execute(self, chat_log: Optional[ChatLog]) -> ChatLog:

@@ -6,9 +6,16 @@ from time import sleep
 from tdc_assistant_client.client import TdcAssistantClient
 from tdc_assistant_client.domain import ChatLog, MessageRole, ChatCompletion
 from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiControllerV2
-from tdc_assistant_gui_controller_v2.public_chat import PublicChat, ParticipantType
+from tdc_assistant_gui_controller_v2.public_chat import (
+    PublicChat,
+    PublicChatMessage,
+    ParticipantType,
+)
+
+from utils import get_prescripted_message, PRESCRIPTED_MESSAGES
 
 from .base_task import BaseTask
+
 
 _participant_type_to_message_role_map: dict[ParticipantType, MessageRole] = {
     "student": "user",
@@ -138,6 +145,25 @@ class CheckPublicChat(BaseTask):
 
         return self._client.get_chat_log(chat_log_id=chat_log["id"])
 
+    def _get_tutor_messages_from_public_chat(
+        self, public_chat: PublicChat
+    ) -> list[PublicChatMessage]:
+        return [
+            m for m in public_chat["messages"] if m["participant"]["type"] == "tutor"
+        ]
+
+    def _should_send_prescripted_message(self, public_chat: PublicChat) -> bool:
+        return len(self._get_tutor_messages_from_public_chat(public_chat)) < len(
+            PRESCRIPTED_MESSAGES
+        )
+
+    def _send_prescripted_message(self, public_chat: PublicChat) -> None:
+        self._controller.send_message(
+            get_prescripted_message(
+                len(self._get_tutor_messages_from_public_chat(public_chat))
+            )
+        )
+
     def _execute(self, chat_log: Optional[ChatLog]) -> ChatLog:
         if chat_log is None:
             raise Exception()
@@ -149,9 +175,12 @@ class CheckPublicChat(BaseTask):
         # Important to do this first so that messages from a previous chat completion are no longer
         # sent in order to create a new chat completion that addresses the student's most previous message
         if self._is_last_message_from_student(public_chat):
-            chat_log = self._persist_public_chat(chat_log, public_chat)
-            self._create_chat_completion(chat_log)
-            chat_log = self._client.get_chat_log(chat_log_id=chat_log["id"])
+            if self._should_send_prescripted_message(public_chat):
+                self._send_prescripted_message(public_chat)
+            else:
+                chat_log = self._persist_public_chat(chat_log, public_chat)
+                self._create_chat_completion(chat_log)
+                chat_log = self._client.get_chat_log(chat_log_id=chat_log["id"])
 
         # 2. Is there a chat completion part that has not been sent yet?
         if self._has_unsent_chat_completion_part(chat_log):

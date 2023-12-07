@@ -15,6 +15,7 @@ from .create_image_capture import *
 from .create_chat_completion_mock_controller import *
 from .find_chat_log_by_id import *
 from .request_chat_completion_approval import *
+from .end_session import *
 
 
 commands: list[Command] = [
@@ -40,4 +41,5 @@ commands: list[Command] = [
         "label": "Request chat completion approval",
         "handler": request_chat_completion_approval,
     },
+    {"label": "End Session", "handler": end_session},
 ]

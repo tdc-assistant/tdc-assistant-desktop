@@ -14,10 +14,15 @@ from tasks import (
     CheckCodeEditorsTask,
     CheckScreenshareTask,
     CheckWordProcessorTask,
+    CheckSessionLimitExceeded,
 )
 
 Task = Union[
-    CheckPublicChat, CheckCodeEditorsTask, CheckScreenshareTask, CheckWordProcessorTask
+    CheckPublicChat,
+    CheckCodeEditorsTask,
+    CheckScreenshareTask,
+    CheckWordProcessorTask,
+    CheckSessionLimitExceeded,
 ]
 
 
@@ -29,6 +34,7 @@ def run(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2) -> 
         CheckCodeEditorsTask(client, controller, 30.0),
         CheckScreenshareTask(client, controller, 45.0),
         CheckWordProcessorTask(client, controller, 30.0),
+        CheckSessionLimitExceeded(client, controller),
     ]
 
     while not session_request_controller.should_terminate():

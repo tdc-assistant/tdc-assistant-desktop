@@ -26,12 +26,19 @@ class CheckSessionLimitExceeded(BaseTask):
     ):
         super().__init__(client, controller, interval_between_execution_in_seconds)
 
+    def _get_time_since_last_update(self, chat_log: ChatLog) -> datetime:
+        return datetime.now()
+
     def _execute(self, chat_log: Optional[ChatLog]) -> ChatLog:
         if chat_log is None:
             raise Exception()
 
         session_start = chat_log["createdAt"]
         now = datetime.now(timezone.utc)
+
+        self._logger.log(
+            f"Current session length {(now - session_start).total_seconds() / 60:.1f} minutes"
+        )
 
         is_session_limit_exceeded = session_start < now - timedelta(
             minutes=MAX_SESSION_LIMIT_IN_MINUTES

@@ -62,6 +62,8 @@ def init_controller() -> TdcAssistantGuiControllerV2:
                         "y": insert_code_editor_coord_path[3][1],  # type: ignore
                     },
                 ),
+                "end_session_button_coords": {"x": 1800, "y": 60},
+                "confirm_end_session_button_coords": {"x": 1000, "y": 625},
                 "public_chat_button_coords": {"x": 1200, "y": 170},
             },
             "scraped_editor_config": {

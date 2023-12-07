@@ -1,6 +1,8 @@
 from typing import Optional
 
 from datetime import datetime, timezone, timedelta
+from random import choice
+from time import sleep
 
 from tdc_assistant_client.client import TdcAssistantClient
 from tdc_assistant_client.domain import ChatLog
@@ -8,7 +10,11 @@ from tdc_assistant_gui_controller_v2.controller import TdcAssistantGuiController
 
 from .base_task import BaseTask
 
-from utils import MAX_SESSION_LIMIT_IN_MINUTES
+from utils import (
+    MAX_SESSION_LIMIT_IN_MINUTES,
+    PRESCRIPTED_END_SESSION_PROMPTS,
+    PRESCRIPTED_FAREWELL_MESSAGES,
+)
 
 
 class CheckSessionLimitExceeded(BaseTask):
@@ -32,7 +38,10 @@ class CheckSessionLimitExceeded(BaseTask):
         )
 
         if is_session_limit_exceeded:
-            pass
-            # TODO Send end-of-session message to student and click button to terminate session
+            # Send end-of-session message to student and click button to terminate session
+            self._controller.send_message(choice(PRESCRIPTED_END_SESSION_PROMPTS))
+            sleep(10)
+            self._controller.send_message(choice(PRESCRIPTED_FAREWELL_MESSAGES))
+            self._controller.end_session()
 
         return chat_log

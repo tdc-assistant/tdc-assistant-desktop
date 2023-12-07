@@ -174,7 +174,10 @@ class CheckPublicChat(BaseTask):
         # 1. Was the student the last person to send a message?
         # Important to do this first so that messages from a previous chat completion are no longer
         # sent in order to create a new chat completion that addresses the student's most previous message
-        if self._is_last_message_from_student(public_chat):
+        if (
+            self._is_last_message_from_student(public_chat)
+            or len(self._get_tutor_messages_from_public_chat(public_chat)) == 0
+        ):
             if self._should_send_prescripted_message(public_chat):
                 self._send_prescripted_message(public_chat)
             else:

@@ -20,8 +20,20 @@ def run_cli(client: TdcAssistantClient, controller: TdcAssistantGuiControllerV2)
             print("Good-bye!")
             break
 
-        sleep(config["DELAY_AFTER_OPTION_SELECT_IN_SECONDS"])
-        commands[option]["handler"](client, controller)
+        # sleep(config["DELAY_AFTER_OPTION_SELECT_IN_SECONDS"])
+
+        if option == 1:
+            while True:
+                try:
+                    commands[option]["handler"](client, controller)
+                except Exception as e:
+                    print("Ooops!")
+                    print(e)
+                    client = init_client()
+                    controller = init_controller()
+                    sleep(5)
+        else:
+            commands[option]["handler"](client, controller)
 
 
 def init_controller() -> TdcAssistantGuiControllerV2:

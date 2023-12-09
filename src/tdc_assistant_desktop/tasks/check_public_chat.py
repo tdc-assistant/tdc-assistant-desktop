@@ -80,9 +80,13 @@ class CheckPublicChat(BaseTask):
         return self._client.get_chat_log(chat_log_id=chat_log["id"])
 
     def _create_chat_completion(self, chat_log: ChatLog) -> ChatCompletion:
+        MAX_TRIES = 5
+        num_chat_completion_tries = 0
+        num_approval_tries = 0
         while True:
             try:
                 chat_completion = self._client.create_chat_completion(chat_log=chat_log)
+                num_chat_completion_tries = 0
 
                 if chat_completion is None:
                     print("Failed to create chat completion")
@@ -98,16 +102,29 @@ class CheckPublicChat(BaseTask):
                         chat_completion = self._client.request_chat_completion_approval(
                             chat_completion=chat_completion
                         )
+                        num_approval_tries = 0
                         approval_status = chat_completion["approvalStatus"]
                         if approval_status == "APPROVED":
                             return chat_completion
                         elif approval_status == "DECLINED":
                             break
-                    except:
-                        print("Retrying chat completion approval....")
+                    except Exception as e:
+                        num_approval_tries += 1
+
+                        if num_approval_tries >= MAX_TRIES:
+                            raise e
+
+                        print(
+                            f"Retrying chat completion approval ({num_approval_tries})..."
+                        )
                         sleep(5)
-            except:
-                print("Retrying chat completion....")
+            except Exception as e:
+                num_chat_completion_tries += 1
+
+                if num_chat_completion_tries >= MAX_TRIES:
+                    raise e
+
+                print(f"Retrying chat completion ({num_chat_completion_tries})...")
                 sleep(5)
 
     def _handle_chat_completion(self, chat_log: ChatLog) -> ChatLog:
